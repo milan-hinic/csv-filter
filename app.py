@@ -7,6 +7,7 @@ st.title("CSV Row Filter (Activation Date)")
 
 # File uploader
 uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+
 if uploaded_file:
     # Read CSV into a pandas DataFrame
     df = pd.read_csv(uploaded_file)
@@ -16,13 +17,16 @@ if uploaded_file:
     # Convert ActivationDate to datetime format
     df['ActivationDate'] = pd.to_datetime(df['ActivationDate'], errors='coerce')
 
-    # Get today's date and calculate the date 7 days ago
-    today = datetime.now()
-    seven_days_ago = today - timedelta(days=7)
+    # Add a slider to select the number of days
+    days = st.slider("Select the number of days for filtering:", min_value=1, max_value=30, value=7)
 
-    # Filter rows where ActivationDate is within the last 7 days
-    filtered_df = df[df['ActivationDate'] >= seven_days_ago]
-    st.write("Filtered Data (Last 7 Days):")
+    # Get today's date and calculate the date `days` ago
+    today = datetime.now()
+    days_ago = today - timedelta(days=days)
+
+    # Filter rows where ActivationDate is within the last `days` days
+    filtered_df = df[df['ActivationDate'] >= days_ago]
+    st.write(f"Filtered Data (Last {days} Days):")
     st.dataframe(filtered_df)
 
     # Download filtered data
